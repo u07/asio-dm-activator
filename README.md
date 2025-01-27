@@ -21,7 +21,8 @@ As a DAW plugin, ASIO-DM-Activator intercepts the audio subsystem initialization
 
 Each time you enable or disable monitoring on a track, the plugin translates the activation request into a format understood by the driver. To the driver, it looks like you’re manually adjusting the mixer slider with your mouse.
 
-Only two channel states are supported: ON and OFF. This ensures the volume balance you've set in the mixer remains unchanged.
+Only two channel states are supported: **ON and OFF**. This ensures the volume balance you've set in the mixer remains unchanged.
+
 ---
 
 ## Installation
