@@ -1,6 +1,6 @@
 # ASIO-DM-ACTIVATOR
 
-ASIO-DM-Activator is a plugin for **Cubase** and **Studio One** that enables the **ASIO Direct Monitoring** feature (commonly known as "Blue Z") for audio interfaces that lack native support for it.
+ASIO-DM-Activator is a plugin for **Cubase** and **Studio One** that enables the **ASIO Direct Monitoring** feature (also known as "Blue Z") for audio interfaces that lack native support for it.
 
 This is a beta release, currently supporting only one device class: the **Audient iD series** (iD14 and above). This limitation is due to testing constraints, as I own an **iD14 MKII**. However, the plugin can theoretically be extended to support any device with a dedicated software mixer. I’d love to hear from you if you can help expand support for additional hardware.
 
