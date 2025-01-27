@@ -21,7 +21,8 @@ As a DAW plugin, ASIO-DM-Activator intercepts the audio subsystem initialization
 
 Each time you enable or disable monitoring on a track, the plugin translates the activation request into a format understood by the driver. To the driver, it looks like you’re manually adjusting the mixer slider with your mouse.
 
-Only two channel states are supported: **ON and OFF**. This ensures the volume balance you've set in the mixer app remains unchanged.
+- Only two channel states are supported: **ON and OFF**. This ensures the volume balance you've set in the mixer app remains unchanged. 
+- Only the **Main mix** is affected. Cue A/B remains untouched.
 
 ---
 
@@ -43,5 +44,5 @@ Place the `asio-dm-activator.dll` file in the appropriate folder:
 3. If multiple devices from the same manufacturer are connected, the plugin will use the first one.  
 4. **Beta version**: Use at your own risk.  
 
-Homepage: [https://PetelinSasha.ru](https://PetelinSasha.ru)
+Homepage: [https://PetelinSasha.ru/notes/asio-dm-activator](https://petelinsasha.ru/notes/asio-dm-activator)
 
