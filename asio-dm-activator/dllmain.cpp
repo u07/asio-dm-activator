@@ -135,6 +135,8 @@ class AsioDriver_Thesycon: public AsioDriver {
 	HMODULE apiDllHandle{};
 	long deviceIndex{};
 	long deviceHandle{};
+	std::wstring deviceName;
+	uint64_t deviceModel{};
 	struct VolPair { 
 		short L{0}; 
 		short R{0}; 
@@ -151,6 +153,7 @@ class AsioDriver_Thesycon: public AsioDriver {
 		long controlSelector, char channelOrMixerControl, void* paramBlock, long paramBlockLength,
 		long* bytesTransferred, long timeoutMillisecs);
 	using TUSBAUDIO_AudioControlRequestSet = TUSBAUDIO_AudioControlRequestGet;
+	using TUSBAUDIO_GetDeviceProperties = long(*)(long deviceHandle, void* properties); 
 
 	// Trying to init the driver as Thesycon if possible
 	// Returns false if the driver doesn't look like Thesycon
@@ -180,8 +183,9 @@ class AsioDriver_Thesycon: public AsioDriver {
 			if (!(func = GetProcAddress(apiDllHandle, "TUSBAUDIO_GetDeviceCount"))) err(L"func not found");
 			dbg(std::format(L"GetDeviceCount={}", ((TUSBAUDIO_GetDeviceCount)func)()));
 
-			if (!(func = GetProcAddress(apiDllHandle, "TUSBAUDIO_OpenDeviceByIndex"))) err(L"func not found");
-			dbg(std::format(L"OpenDevice={} handle={}", ((TUSBAUDIO_OpenDeviceByIndex)func)(deviceIndex, &deviceHandle), deviceHandle));
+			if NOT_OK(ReopenDevice(0)) err(L"Failed to open device");
+
+			if NOT_OK(GetDeviceProperties()) err(L"Failed to get device model");
 
 			// Alright, it walks like a duck and quacks like a duck
 			dbg(L"Init ok, this is Thesycon indeed.");
@@ -213,6 +217,18 @@ class AsioDriver_Thesycon: public AsioDriver {
 	}
 
 
+	long GetDeviceProperties() {
+		auto func = GetProcAddress(apiDllHandle, "TUSBAUDIO_GetDeviceProperties");
+		if (!func) return -1;
+		char buf[2048]{};
+		auto result = ((TUSBAUDIO_GetDeviceProperties)func)(deviceHandle, (void*)buf);
+		deviceModel = *(uint64_t*)buf; // VID & PID
+		deviceName = (WCHAR*)(buf + 524); // product "Audient iD14"
+		dbg(std::format(L"Device info result={} model={:016x} name={}", result, deviceModel, deviceName));
+		return result;
+	}
+
+
 	bool DeviceAlive() {
 		auto func = GetProcAddress(apiDllHandle, "TUSBAUDIO_AudioControlRequestGet");
 		if (!func) return false;
@@ -222,10 +238,34 @@ class AsioDriver_Thesycon: public AsioDriver {
 		return (result == 0);
 	}
 
+	byte GetVirtualChannelIndex(byte channel) {
+
+		std::unordered_map<uint64_t, int> mixSupport = {
+			{ 0x0100002708, 3 },   //=Audient iD22 mk1 (from video) 
+			{ 0x0200002708, 3 },   //?Audient iD14 mk1 (from video, but somewhere 2)
+			{ 0x0300002708, 1 },   // Audient iD4 mk1
+			{ 0x0400002708, 2 },   //=Audient Sono (from video)                             todo! 
+			{ 0x0500002708, 3 },   // Audient iD44 mk1                            Check mix numbers with real HW.
+			{ 0x0600002708, 1 },   // Audient EVO4                                 Not sure if they are correct.
+			{ 0x0700002708, 2 },   //?Audient EVO8 (from video)
+			{ 0x0900002708, 1 },   // Audient iD4 mk2                                    1 = MainMix
+			{ 0x0800002708, 3 },   //+Audient iD14 mk2 (real hw tested)                  2 = MainMix + Cue
+			{ 0x0A00002708, 5 },   //=Audient EVO16 (from video)                         3 = MainMix + CueA + CueB
+			{ 0x0B00002708, 5 },   //=Audient iD44 mk2 (from video)
+			{ 0x0D00002708, 3 },   //=Audient iD24 mk2 (from video)
+			{ 0x0E00002708, 1 },   // Audient ORIA
+			{ 0x0F00002708, 1 },   // Audient iD4 Stream OTG 
+			{ 0x1000002708, 3 },   // Audient iD14 Stream OTG
+//			{ 0x__00002708, 5 },   //=Audient iD48 (from video presentation)
+		};
+		int mixCount = mixSupport.contains(deviceModel) ? mixSupport[deviceModel] : 1;
+		return channel * (mixCount * 2); // L+R
+	}
+
 
 	long SetVol(byte channel, VolPair vol) {
-		byte channel_l = channel * 7;
-		byte channel_r = channel * 7 + 1;
+		byte channel_l = GetVirtualChannelIndex(channel);
+		byte channel_r = GetVirtualChannelIndex(channel) + 1;
 		auto func = GetProcAddress(apiDllHandle, "TUSBAUDIO_AudioControlRequestSet");
 		if (!func) return -1;
 		auto result = ((TUSBAUDIO_AudioControlRequestSet)func)(deviceHandle, 0x3C, 0x1, 0x1, channel_l, (void*)&vol.L, 2, NULL, 10000);
@@ -236,8 +276,8 @@ class AsioDriver_Thesycon: public AsioDriver {
 
 
 	long GetVol(byte channel, VolPair& vol) {
-		byte channel_l = channel * 7;
-		byte channel_r = channel * 7 + 1;
+		byte channel_l = GetVirtualChannelIndex(channel);
+		byte channel_r = GetVirtualChannelIndex(channel) + 1;
 		auto func = GetProcAddress(apiDllHandle, "TUSBAUDIO_AudioControlRequestGet");
 		if (!func) return -1;
 		auto result = ((TUSBAUDIO_AudioControlRequestGet)func)(deviceHandle, 0x3C, 0x1, 0x1, channel_l, (void*)&vol.L, 2, NULL, 10000);
