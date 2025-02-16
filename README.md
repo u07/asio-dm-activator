@@ -42,7 +42,14 @@ Place the `asio-dm-activator.dll` file in the appropriate folder:
 1. A 64-bit OS and 64-bit DAW are required.  
 2. Compatible with Windows 7 and later.  
 3. If multiple devices from the same manufacturer are connected, the plugin will use the first one.  
-4. **Beta version**: Use at your own risk.  
+4. **Beta version**: Use at your own risk.
+
+## Debug
+
+If the plugin misbehaves — wrong channels, no monitoring on your device — run [DebugView](https://learn.microsoft.com/en-us/sysinternals/downloads/debugview) to check the logs. The real-time output provides insight into plugin's operation and may help identify issues. If you decide to open an issue, include these logs to expedite troubleshooting.
+
+![image](https://github.com/user-attachments/assets/f3ae433c-a667-40cf-8ca2-77e3bb9a9c69)
+
 
 Homepage: [https://PetelinSasha.ru/notes/asio-dm-activator](https://petelinsasha.ru/notes/asio-dm-activator)
 
