@@ -2,7 +2,7 @@
 
 ASIO-DM-Activator is a plugin for **Cubase** and **Studio One** that enables the **ASIO Direct Monitoring** feature (also known as "**Blue Z**") for audio interfaces that lack native support for it.
 
-This plugin will attempt to work with any audio interface that uses the **Thesycon** driver, regardless of the manufacturer. However, **guaranteed support is limited to the Audient iD14 MKII**, as I don’t own other hardware for testing. If you use an **iD** or **EVO** series interface, it will likely work, but **I’d still appreciate your feedback** — whether it does or not — and a log of its operation. 
+This plugin will attempt to work with any audio interface that uses the **Thesycon** driver, regardless of the manufacturer. However, **guaranteed support is limited to the Audient iD14 MKII**, as I don’t own other hardware for testing. If you use an **iD** or **EVO** series interface, it will likely work, but **I’d still appreciate your feedback** whether it does or not. 
 
 The code is structured to allow easy addition of other drivers besides Thesycon. I’d love to hear from you if you can help with coding and expanding support for additional hardware.
 
