@@ -14,7 +14,7 @@ The iD series lacks a physical Direct Monitoring button, meaning you have to gra
 
 ## How It Works
 
-As a DAW plugin, ASIO-DM-Activator intercepts the audio subsystem initialization, modifies the driver's capability response, and adds **Direct Monitoring** to the list of supported features. When successful, your DAW will display DM as available. 
+As a DAW plugin, ASIO-DM-Activator intercepts the audio subsystem initialization, modifies the driver's capability response, and adds **Direct Monitoring** to the list of supported features. When successful, your DAW will display DM as available. From this point on, the familiar monitoring button changes its behavior, turning into a zero-latency Direct Monitoring switch.
 
 ![cube12](https://github.com/user-attachments/assets/45ad1bfd-a411-416d-b43e-9a988ce446e4)
 ![studio1_](https://github.com/user-attachments/assets/2451e06a-1c8e-47c7-b8a4-eefb6d15302c)
